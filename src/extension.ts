@@ -1,16 +1,21 @@
 import * as vscode from "vscode";
 
 export function activate(context: vscode.ExtensionContext) {
-  let disposable = vscode.commands.registerCommand(
-    "vim-line-numbers.helloWorld",
-    () => {
-      vscode.window.showInformationMessage(
-        "Hello World from vim-line-numbers!"
-      );
-    }
+  let statusBarItem = vscode.window.createStatusBarItem(
+    vscode.StatusBarAlignment.Right,
+    100
   );
 
-  context.subscriptions.push(disposable);
+  vscode.window.onDidChangeTextEditorSelection((event) => {
+    const editor = vscode.window.activeTextEditor;
+    if (editor) {
+      vscode.window.showInformationMessage("Hello Editor");
+    } else {
+      vscode.window.showErrorMessage("No Editor");
+    }
+  });
+
+  context.subscriptions.push(statusBarItem);
 }
 
 export function deactivate() {}
