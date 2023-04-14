@@ -1,21 +1,24 @@
-import * as vscode from "vscode";
+import { ExtensionContext, window, StatusBarAlignment } from "vscode";
 
-export function activate(context: vscode.ExtensionContext) {
-  let statusBarItem = vscode.window.createStatusBarItem(
-    vscode.StatusBarAlignment.Right,
+export function activate(context: ExtensionContext) {
+  const statusBarItem = window.createStatusBarItem(
+    StatusBarAlignment.Right,
     100
   );
 
-  vscode.window.onDidChangeTextEditorSelection((event) => {
-    const editor = vscode.window.activeTextEditor;
+  window.onDidChangeTextEditorSelection(() => {
+    const editor = window.activeTextEditor;
     if (editor) {
-      vscode.window.showInformationMessage("Hello Editor");
-    } else {
-      vscode.window.showErrorMessage("No Editor");
+      const position = editor.selection.active;
+      const lineNumber = position.line + 1;
+      const characterNumber = position.character + 1;
+      const document = editor.document;
+      const totalLines = document.lineCount;
+      const percentage = ((lineNumber / totalLines) * 100).toFixed(0);
+      statusBarItem.text = `Line ${lineNumber}:${characterNumber} ${percentage}% down`;
+      statusBarItem.show();
     }
   });
 
   context.subscriptions.push(statusBarItem);
 }
-
-export function deactivate() {}
